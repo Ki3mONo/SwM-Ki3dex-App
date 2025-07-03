@@ -1,10 +1,12 @@
+import React, { useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
-import { useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import './globals.css';
 
 import { TailwindProvider } from 'tailwindcss-react-native';
+import { FavoriteProvider } from '@/hooks/useFavorite';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,8 +24,12 @@ export default function RootLayout() {
   if (!fontsLoaded && !fontError) return null;
 
   return (
-    <TailwindProvider>
-      <Stack screenOptions={{ headerShown: false }} />
-    </TailwindProvider>
+    <SafeAreaProvider>
+      <TailwindProvider>
+        <FavoriteProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+        </FavoriteProvider>
+      </TailwindProvider>
+    </SafeAreaProvider>
   );
 }
