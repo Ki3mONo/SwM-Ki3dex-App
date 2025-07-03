@@ -10,7 +10,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="list"
         options={{
-          title: 'Lista',
+          title: 'List',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list" size={size} color={color} />
           ),
@@ -19,7 +19,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="favourites"
         options={{
-          title: 'Ulubione',
+          title: 'Favourite',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart" size={size} color={color} />
           ),
@@ -28,7 +28,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="map"
         options={{
-          title: 'Mapa',
+          title: 'Map',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="map" size={size} color={color} />
           ),
@@ -37,7 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="camera"
         options={{
-          title: 'Kamera',
+          title: 'Camera',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="camera" size={size} color={color} />
           ),

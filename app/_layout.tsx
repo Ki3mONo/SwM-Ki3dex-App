@@ -1,7 +1,10 @@
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
+
 import './globals.css';
+
+import { TailwindProvider } from 'tailwindcss-react-native';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -18,5 +21,9 @@ export default function RootLayout() {
 
   if (!fontsLoaded && !fontError) return null;
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <TailwindProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </TailwindProvider>
+  );
 }

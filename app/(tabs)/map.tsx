@@ -1,9 +1,9 @@
-import { View, Text } from 'react-native';
+import { Platform } from 'react-native';
 
-export default function ListScreen() {
-  return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-xl font-bold">Widok Mapy (WIP)</Text>
-    </View>
-  );
-}
+const MapScreen = Platform.select({
+  ios:  () => require('./map.ios').default,
+  android: () => require('./map.android').default,
+  default: () => require('./map.ios').default,
+})();
+
+export default MapScreen;
