@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useFavorite } from '@/hooks/useFavorite';
 import PokemonDetail from '@/components/pokemonDetail';
+import { useRouter } from 'expo-router';
 
 export default function FavouritesScreen() {
   const { favoriteId } = useFavorite();
+  const router = useRouter();
+  const firstRender = useRef(true);
+
+  useEffect(() => {
+    if (!favoriteId && !firstRender.current) {
+      router.replace('/(tabs)/list');
+    }
+    firstRender.current = false;
+  }, [favoriteId]);
 
   if (!favoriteId) {
     return (

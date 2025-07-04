@@ -33,7 +33,6 @@ const POKEMON_COLORS: Record<string, string> = {
   pink: '#F783AC',
 };
 
-// Helper
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 interface Props {
@@ -52,10 +51,10 @@ export default function PokemonDetail({ id, showBackButton = true }: Props) {
 
   const [existingFav, setExistingFav] = useState<PokemonInfo | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [confirmRemoveVisible, setConfirmRemoveVisible] = useState(false);
 
   const isFav = favoriteId === id;
 
-  // 1) Load this Pokémon’s data
   useEffect(() => {
     (async () => {
       try {
@@ -72,7 +71,6 @@ export default function PokemonDetail({ id, showBackButton = true }: Props) {
     })();
   }, [id]);
 
-  // 2) If there's another favorite, fetch its details for the modal
   useEffect(() => {
     if (favoriteId && favoriteId !== id) {
       (async () => {
@@ -91,18 +89,16 @@ export default function PokemonDetail({ id, showBackButton = true }: Props) {
     }
   }, [favoriteId, id]);
 
-  // 3) Handle heart button
   const handlePressFav = () => {
     if (!favoriteId) {
       setFavorite(id);
     } else if (isFav) {
-      removeFavorite();
+      setConfirmRemoveVisible(true);
     } else {
       setModalVisible(true);
     }
   };
 
-  // 4) Render loading / error
   if (loading) {
     return (
       <SafeAreaView style={styles.center}>
@@ -118,7 +114,6 @@ export default function PokemonDetail({ id, showBackButton = true }: Props) {
     );
   }
 
-  // 5) Prepare display data
   const color = POKEMON_COLORS[species.color.name] || '#6366F1';
   const displayName = capitalize(pokemon.name);
   const imageUrl =
@@ -199,9 +194,36 @@ export default function PokemonDetail({ id, showBackButton = true }: Props) {
             if (selectedId === id) {
               setFavorite(id);
             }
-            // jeśli wybrano existingFav.id, to nic nie zmieniamy
           }}
         />
+      )}
+
+      {confirmRemoveVisible && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Remove Favorite</Text>
+            <Text style={styles.modalText}>
+              Are you sure you want to remove your favorite Pokémon?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setConfirmRemoveVisible(false)}
+              >
+                <Text style={styles.cancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={async () => {
+                  await removeFavorite();
+                  setConfirmRemoveVisible(false);
+                }}
+              >
+                <Text style={styles.confirmText}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       )}
     </>
   );
@@ -249,4 +271,58 @@ const styles = StyleSheet.create({
   },
   statLabel: { fontSize: 14, color: '#6B7280', marginBottom: 4 },
   statValue: { fontSize: 18, fontWeight: 'bold', color: '#1F2937' },
+
+  modalOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 50,
+  },
+  modalBox: {
+    backgroundColor: 'white',
+    padding: 24,
+    borderRadius: 12,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#111827',
+  },
+  modalText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#374151',
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 10,
+    marginHorizontal: 5,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#E5E7EB',
+  },
+  confirmButton: {
+    backgroundColor: '#EF4444',
+  },
+  cancelText: {
+    color: '#1F2937',
+    fontWeight: 'bold',
+  },
+  confirmText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });

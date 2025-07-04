@@ -1,3 +1,4 @@
+import PokemonDetail from '@/components/pokemonDetail';
 import { View, Text } from 'react-native';
 
 export default function ListScreen() {
