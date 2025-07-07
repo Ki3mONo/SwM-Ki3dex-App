@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "deploymentTarget": "13.0",
+      "deploymentTarget": "15.5",
       "supportsTablet": true,
       "bundleIdentifier": "com.ki3mon.ki3dex",
       "infoPlist": {
@@ -20,10 +20,17 @@
       }
     },
     "android": {
+      "minSDKVersion": 26,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      },
+      "edgeToEdge": true,
       "edgeToEdgeEnabled": true,
       "package": "com.ki3mon.ki3dex",
       "permissions": [
@@ -43,12 +50,9 @@
     "plugins": [
       "expo-router",
       [
-        "expo-splash-screen",
+        "expo-edge-to-edge",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "enabled": true
         }
       ],
       [
@@ -73,6 +77,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "30f0dade-c851-47a0-a7e1-f0209beddb20"
+      }
     }
+  },
+  "extra": {
+    "VisionCamera_enableFrameProcessors": "true"
   }
 }
