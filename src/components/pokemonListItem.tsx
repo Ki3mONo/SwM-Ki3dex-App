@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
-import { useRouter, useFocusEffect } from 'expo-router';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { FavoriteStorage } from '@/services/favoriteStorage';
 import type { Pokemon } from '@/types/pokemon';
+import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useState } from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 export default function PokemonListItem({ pokemon }: { pokemon: Pokemon }) {
   const router = useRouter();
@@ -12,7 +12,6 @@ export default function PokemonListItem({ pokemon }: { pokemon: Pokemon }) {
 
   const [isFav, setIsFav] = useState(false);
 
-  // Re-check favorite status whenever this route/screen is focused
   useFocusEffect(
     useCallback(() => {
       FavoriteStorage.isFavorite(pokemon.id.toString()).then(setIsFav);
@@ -24,79 +23,38 @@ export default function PokemonListItem({ pokemon }: { pokemon: Pokemon }) {
   };
 
   return (
-    <TouchableOpacity style={styles.row} onPress={handlePress}>
-      <View style={styles.text}>
-        <View style={styles.nameRow}>
-          <Text style={styles.name}>{displayName}</Text>
+    <TouchableOpacity
+      className="flex-row items-center justify-between p-3 border-b border-gray-200"
+      onPress={handlePress}
+    >
+      <View className="flex-1 pr-3">
+        <View className="flex-row items-center">
+          <Text className="text-lg font-semibold">{displayName}</Text>
           {isFav && (
             <>
               <Ionicons
                 name="heart"
                 size={16}
                 color="red"
-                style={styles.heart}
+                className="ml-1"
               />
-              <Text style={styles.favText}>favorite</Text>
+              <Text className="ml-1 text-red-500 text-xs font-semibold">
+                favorite
+              </Text>
             </>
           )}
         </View>
-        <Text style={styles.types}>{pokemon.types.join(', ')}</Text>
+        <Text className="mt-1 text-gray-500">{pokemon.types.join(', ')}</Text>
       </View>
       {pokemon.sprites.front_default ? (
         <Image
           source={{ uri: pokemon.sprites.front_default }}
-          style={styles.image}
+          className="w-12 h-12"
+          style={{ resizeMode: 'contain' }}
         />
       ) : (
-        <View style={styles.placeholder} />
+        <View className="w-12 h-12 bg-gray-200 rounded-full" />
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  text: {
-    flex: 1,
-    paddingRight: 12,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  name: {
-    fontSize: 17,
-    fontWeight: '600',
-  },
-  heart: {
-    marginLeft: 4,
-  },
-  favText: {
-    marginLeft: 4,
-    color: 'red',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  types: {
-    marginTop: 4,
-    color: '#6B7280',
-  },
-  image: {
-    width: 48,
-    height: 48,
-    resizeMode: 'contain',
-  },
-  placeholder: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 24,
-  },
-});
