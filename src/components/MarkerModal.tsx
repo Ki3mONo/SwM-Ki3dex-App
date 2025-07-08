@@ -32,7 +32,6 @@ export default function MarkerModal({ visible, marker, onClose, onRemove }: Prop
   return (
     <Modal
       visible={visible}
-      animationType="slide"
       transparent
       onRequestClose={onClose}
     >

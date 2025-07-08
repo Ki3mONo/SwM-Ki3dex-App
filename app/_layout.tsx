@@ -13,7 +13,7 @@ export default function RootLayout() {
   });
 
   if (!fontsLoaded && !fontError) return null;
-
+  
   return (
     <SafeAreaProvider>
         <TailwindProvider>
