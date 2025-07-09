@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
-  Image,
   StyleSheet,
   View,
 } from 'react-native';
@@ -19,6 +18,7 @@ import {
 } from 'react-native-vision-camera-face-detector';
 import { Worklets } from 'react-native-worklets-core';
 
+import PokemonOverlay from '@/components/PokemonOverlay';
 import { useFavorite } from '@/hooks/useFavorite';
 import { fetchPokemonDetail } from '@/services/pokeapi';
 
@@ -36,7 +36,6 @@ export default function CameraScreen() {
 
   const { favoriteId } = useFavorite();
   const [pokemonUri, setPokemonUri] = useState<string | null>(null);
-
   const [overlay, setOverlay] = useState<Overlay | null>(null);
 
   useEffect(() => {
@@ -59,7 +58,7 @@ export default function CameraScreen() {
     performanceMode: 'fast',
     landmarkMode: 'none',
     classificationMode: 'none',
-    autoMode: true, 
+    autoMode: true,
     windowWidth: WINDOW_WIDTH,
     windowHeight: WINDOW_HEIGHT,
     cameraFacing: 'front',
@@ -119,19 +118,12 @@ export default function CameraScreen() {
         frameProcessor={frameProcessor}
       />
 
-      {overlay && (
-        <Image
-          source={{ uri: pokemonUri }}
-          style={[
-            styles.pokemon,
-            {
-              left: overlay.x,
-              top: overlay.y,
-              width: overlay.size,
-              height: overlay.size,
-            },
-          ]}
-          resizeMode="contain"
+      {overlay && pokemonUri && (
+        <PokemonOverlay
+          uri={pokemonUri}
+          x={overlay.x}
+          y={overlay.y}
+          size={overlay.size}
         />
       )}
     </View>
@@ -148,9 +140,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#1A1E3F',
-  },
-  pokemon: {
-    position: 'absolute',
-    zIndex: 10,
   },
 });
