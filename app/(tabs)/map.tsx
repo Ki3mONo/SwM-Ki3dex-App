@@ -113,7 +113,7 @@ export default function MapScreen() {
 
       <MarkerBottomSheet
         selectedMarker={selectedMarker}
-        hasMarkers={pokemonMarkers.length > 0}   // <-- tutaj
+        hasMarkers={pokemonMarkers.length > 0}
         onRemove={handleRemove}
       />
     </SafeAreaView>

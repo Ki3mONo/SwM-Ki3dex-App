@@ -1,46 +1,45 @@
+import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
+const menuItems = [
+  { label: 'Pokémon List',      route: '/(tabs)/list',       icon: 'list'   },
+  { label: 'Favourite Pokémon', route: '/(tabs)/favourites', icon: 'heart'  },
+  { label: 'Map',               route: '/(tabs)/map',        icon: 'map'    },
+  { label: 'Camera',            route: '/(tabs)/camera',     icon: 'camera' },
+] as const;
 
 export default function HomeScreen() {
   const router = useRouter();
 
   return (
-    <View className="flex-1 justify-center items-center bg-white">
-      <View className="relative mb-10 px-6">
-        <Text className="text-4xl font-pokemon text-pokeText text-center leading-[48px]" 
-        style={{ textShadowColor: 'var(--poke-text-secondary)', 
-        textShadowOffset: { width: 4, height: 4 }, textShadowRadius: 3 }}>
-          Welcome to Ki3Dex!
-          </Text>
-      </View>
-
-      <Pressable
-        onPress={() => router.push('/(tabs)/list')}
-        className="mb-4 p-4 w-64 bg-primary rounded-xl"
+    <View className="flex-1 bg-white items-center justify-center px-4">
+      <Text
+        className="font-pokemon text-pokeText text-center mb-12"
+        style={{
+          textShadowColor: 'var(--poke-text-secondary)',
+          textShadowOffset: { width: 4, height: 4 },
+          textShadowRadius: 3,
+        }}
       >
-        <Text className="text-center text-pokeText font-semibold">Pokémon List</Text>
-      </Pressable>
+        <Text className="text-4xl">Welcome to</Text>
+        {'\n'}
+        {'\n'}
+        <Text className="text-6xl">Ki3Dex!</Text>
+      </Text>
 
-      <Pressable
-        onPress={() => router.push('/(tabs)/favourites')}
-        className="mb-4 p-4 w-64 bg-primary rounded-xl"
-      >
-        <Text className="text-center text-pokeText font-semibold fontsize-16px">Favourite Pokémon</Text>
-      </Pressable>
-
-      <Pressable
-        onPress={() => router.push('/(tabs)/map')}
-        className="mb-4 p-4 w-64 bg-primary rounded-xl"
-      >
-        <Text className="text-center text-pokeText font-semibold">Map</Text>
-      </Pressable>
-
-      <Pressable
-        onPress={() => router.push('/(tabs)/camera')}
-        className="p-4 w-64 bg-primary rounded-xl"
-      >
-        <Text className="text-center text-pokeText font-semibold">Camera</Text>
-      </Pressable>
+      {menuItems.map(({ label, route, icon }) => (
+        <Pressable
+          key={route}
+          onPress={() => router.push(route)}
+          className="w-full flex-row items-center bg-primary rounded-xl px-6 py-4 mb-4"
+          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+        >
+          <Ionicons name={icon} size={24} color="white" className="mr-4" />
+          <Text className="text-white font-pokemon text-lg">{label}</Text>
+        </Pressable>
+      ))}
     </View>
   );
 }

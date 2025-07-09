@@ -1,17 +1,49 @@
-import React from 'react';
-import { Image } from 'react-native';
+import React, { useEffect } from 'react';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
+import type { ImageProps } from 'react-native';
 
-interface Props {
+interface Props extends Omit<ImageProps, 'source'> {
   name: string;
 }
 
-export default function CustomMarker({ name }: Props) {
+export default function CustomMarker({ name, ...rest }: Props) {
   const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${name}.png`;
 
+  const translateY = useSharedValue(-100);
+  const scale = useSharedValue(0);
+
+  useEffect(() => {
+    translateY.value = withSpring(0, {
+      stiffness: 80,
+      damping: 10,
+    });
+    scale.value = withTiming(1, {
+      duration: 300,
+      easing: Easing.out(Easing.exp),
+    });
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }));
+
   return (
-    <Image
+    <Animated.Image
+      {...rest}
       source={{ uri: imageUrl }}
-      style={{ width: 40, height: 40 }}
+      style={[
+        { width: 40, height: 40 },
+        animatedStyle,
+      ]}
       resizeMode="contain"
     />
   );

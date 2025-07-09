@@ -1,4 +1,3 @@
-// From pokeapi.co
 export interface Pokemon {
   id: number;
   name: string;
@@ -11,8 +10,8 @@ export interface Pokemon {
       };
     };
   };
-  height?: number;
-  weight?: number;
+  height: number;
+  weight: number;
   species?: {
     url: string;
   };
