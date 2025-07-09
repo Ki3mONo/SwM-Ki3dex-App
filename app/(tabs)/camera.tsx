@@ -1,8 +1,10 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {
@@ -12,9 +14,9 @@ import {
   useFrameProcessor,
 } from 'react-native-vision-camera';
 import {
-  useFaceDetector,
   Face,
   FaceDetectionOptions,
+  useFaceDetector,
 } from 'react-native-vision-camera-face-detector';
 import { Worklets } from 'react-native-worklets-core';
 
@@ -32,7 +34,8 @@ interface Overlay {
 
 export default function CameraScreen() {
   const { hasPermission, requestPermission } = useCameraPermission();
-  const device = useCameraDevice('front');
+  const [cameraPosition, setCameraPosition] = useState<'front' | 'back'>('front');
+  const device = useCameraDevice(cameraPosition);
 
   const { favoriteId } = useFavorite();
   const [pokemonUri, setPokemonUri] = useState<string | null>(null);
@@ -61,10 +64,17 @@ export default function CameraScreen() {
     autoMode: true,
     windowWidth: WINDOW_WIDTH,
     windowHeight: WINDOW_HEIGHT,
-    cameraFacing: 'front',
-  }).current;
+    cameraFacing: cameraPosition,
+  });
 
-  const { detectFaces } = useFaceDetector(faceOptions);
+  useEffect(() => {
+    faceOptions.current = {
+      ...faceOptions.current,
+      cameraFacing: cameraPosition,
+    };
+  }, [cameraPosition]);
+
+  const { detectFaces } = useFaceDetector(faceOptions.current);
 
   const handleFaces = Worklets.createRunOnJS((faces: Face[]) => {
     if (faces.length === 0) {
@@ -93,6 +103,11 @@ export default function CameraScreen() {
     },
     [detectFaces, handleFaces],
   );
+
+  const toggleCamera = () => {
+    setCameraPosition((prev) => (prev === 'front' ? 'back' : 'front'));
+    setOverlay(null);
+  };
 
   if (!hasPermission || !device) {
     return (
@@ -126,6 +141,14 @@ export default function CameraScreen() {
           size={overlay.size}
         />
       )}
+
+      <TouchableOpacity style={styles.toggleButton} onPress={toggleCamera}>
+        <Ionicons 
+          name="camera-reverse" 
+          size={30} 
+          color="white" 
+        />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -140,5 +163,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#1A1E3F',
+  },
+  toggleButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 30,
+    padding: 15,
+    zIndex: 1,
   },
 });
