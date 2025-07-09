@@ -16,7 +16,7 @@ export interface SelectedMarker extends PokemonMarker {
 
 interface Props {
   selectedMarker: SelectedMarker | null;
-  hasMarkers: boolean;             // <-- nowa właściwość
+  hasMarkers: boolean;
   onRemove: (id: string) => void;
 }
 

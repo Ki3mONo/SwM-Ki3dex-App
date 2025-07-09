@@ -15,13 +15,13 @@ export default function HomeScreen() {
 
   return (
     <ImageBackground
-      source={require('@/../assets/images/forest.jpg')}   // ← make sure this path is correct
-      style={{ flex: 1 }}                                  // ← stretch to fill the screen
-      resizeMode="cover"                                   // ← good for full-screen background
+      source={require('@/../assets/images/forest.jpg')}
+      style={{ flex: 1 }}
+      resizeMode="cover"
     >
       <View
-        className="flex-1 items-center justify-center px-4" // ← removed bg-white
-        style={{ backgroundColor: 'transparent' }}          // ← ensure transparency
+        className="flex-1 items-center justify-center px-4"
+        style={{ backgroundColor: 'transparent' }}
       >
         <Text
           className="font-pokemon text-pokeText text-center mb-12"
