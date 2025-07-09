@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -14,32 +14,40 @@ export default function HomeScreen() {
   const router = useRouter();
 
   return (
-    <View className="flex-1 bg-white items-center justify-center px-4">
-      <Text
-        className="font-pokemon text-pokeText text-center mb-12"
-        style={{
-          textShadowColor: 'var(--poke-text-secondary)',
-          textShadowOffset: { width: 4, height: 4 },
-          textShadowRadius: 3,
-        }}
+    <ImageBackground
+      source={require('@/../assets/images/forest.jpg')}   // ← make sure this path is correct
+      style={{ flex: 1 }}                                  // ← stretch to fill the screen
+      resizeMode="cover"                                   // ← good for full-screen background
+    >
+      <View
+        className="flex-1 items-center justify-center px-4" // ← removed bg-white
+        style={{ backgroundColor: 'transparent' }}          // ← ensure transparency
       >
-        <Text className="text-4xl">Welcome to</Text>
-        {'\n'}
-        {'\n'}
-        <Text className="text-6xl">Ki3Dex!</Text>
-      </Text>
-
-      {menuItems.map(({ label, route, icon }) => (
-        <Pressable
-          key={route}
-          onPress={() => router.push(route)}
-          className="w-full flex-row items-center bg-primary rounded-xl px-6 py-4 mb-4"
-          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+        <Text
+          className="font-pokemon text-pokeText text-center mb-12"
+          style={{
+            textShadowColor: 'var(--poke-text-secondary)',
+            textShadowOffset: { width: 4, height: 4 },
+            textShadowRadius: 3,
+          }}
         >
-          <Ionicons name={icon} size={24} color="white" className="mr-4" />
-          <Text className="text-pokeText font-pokemon text-lg">{label}</Text>
-        </Pressable>
-      ))}
-    </View>
+          <Text className="text-4xl">Welcome to</Text>
+          {'\n\n'}
+          <Text className="text-6xl">Ki3Dex!</Text>
+        </Text>
+
+        {menuItems.map(({ label, route, icon }) => (
+          <Pressable
+            key={route}
+            onPress={() => router.push(route)}
+            className="w-full flex-row items-center bg-primary rounded-xl px-6 py-4 mb-4 opacity-85"
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+          >
+            <Ionicons name={icon} size={24} color="white" className="mr-4" />
+            <Text className="text-pokeText font-pokemon text-lg">{label}</Text>
+          </Pressable>
+        ))}
+      </View>
+    </ImageBackground>
   );
 }
