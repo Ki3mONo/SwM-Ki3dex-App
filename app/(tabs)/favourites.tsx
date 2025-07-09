@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import PokemonDetail from '@/components/PokemonDetail';
 import { useFavorite } from '@/hooks/useFavorite';
-import PokemonDetail from '@/components/pokemonDetail';
 import { useRouter } from 'expo-router';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function FavouritesScreen() {
   const { favoriteId } = useFavorite();

@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSharedValue } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { fetchPokemonDetail } from '@/services/pokeapi';
-import { useFavorite } from '@/hooks/useFavorite';
-import type { Pokemon, PokemonSpecies } from '@/types/pokemon';
-import ChangeFavoriteModal, { PokemonInfo } from '@/components/changeFavouriteModal';
+import ChangeFavoriteModal, { PokemonInfo } from '@/components/ChangeFavouriteModal';
 import PokemonBottomSheet from '@/components/PokemonBottomSheet';
+import { useFavorite } from '@/hooks/useFavorite';
+import { fetchPokemonDetail } from '@/services/pokeapi';
+import type { Pokemon, PokemonSpecies } from '@/types/pokemon';
 
 const { width } = Dimensions.get('window');
 

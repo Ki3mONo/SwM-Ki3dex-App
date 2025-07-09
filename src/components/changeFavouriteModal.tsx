@@ -1,11 +1,11 @@
 import React from 'react';
 import {
+  Image,
   Modal,
-  View,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  Image,
-  StyleSheet,
+  View,
 } from 'react-native';
 
 export interface PokemonInfo {

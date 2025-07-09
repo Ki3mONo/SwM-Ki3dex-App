@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   SafeAreaView,
 } from 'react-native-safe-area-context';
-import {
-  FlatList,
-  ActivityIndicator,
-  RefreshControl,
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
 
-import type { Pokemon } from '@/types/pokemon';
+import PokemonListItem from '@/components/PokemonListItem';
 import { fetchPokemonList } from '@/services/pokeapi';
-import PokemonListItem from '@/components/pokemonListItem';
+import type { Pokemon } from '@/types/pokemon';
 
 export default function ListScreen() {
   const [data, setData] = useState<Pokemon[]>([]);

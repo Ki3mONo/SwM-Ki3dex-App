@@ -1,6 +1,6 @@
-import React from 'react';
+import PokemonDetail from '@/components/PokemonDetail';
 import { useLocalSearchParams } from 'expo-router';
-import PokemonDetail from '@/components/pokemonDetail';
+import React from 'react';
 
 export default function PokemonDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
