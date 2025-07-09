@@ -37,7 +37,7 @@ export default function HomeScreen() {
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
         >
           <Ionicons name={icon} size={24} color="white" className="mr-4" />
-          <Text className="text-white font-pokemon text-lg">{label}</Text>
+          <Text className="text-pokeText font-pokemon text-lg">{label}</Text>
         </Pressable>
       ))}
     </View>
