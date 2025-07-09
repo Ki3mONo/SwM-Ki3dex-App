@@ -112,7 +112,7 @@ expo build:android
 
 - ✅ iOS
 - ✅ Android
-- ✅ Web
+- ❎ Web (not working)
 
 
 ## 📄 License
