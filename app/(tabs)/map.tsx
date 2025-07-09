@@ -3,29 +3,18 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   StyleSheet,
-  Text,
   View,
+  Text,
 } from 'react-native';
 import MapView, { LongPressEvent, Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CustomMarker from '@/components/CustomMarker';
-import MarkerModal from '@/components/MarkerModal';
 import { useFavorite } from '@/hooks/useFavorite';
-
-interface PokemonMarker {
-  id: string;
-  coordinate: {
-    latitude: number;
-    longitude: number;
-  };
-  name: string; // Pokémon ID (string)
-}
-
-interface SelectedMarker extends PokemonMarker {
-  displayName: string;
-  imageUrl: string;
-}
+import MarkerBottomSheet, {
+  PokemonMarker,
+  SelectedMarker,
+} from '@/components/MarkerBottomSheet';
 
 const DEFAULT_REGION = {
   latitude: 50.049,
@@ -49,61 +38,50 @@ export default function MapScreen() {
         setErrorMsg('Location access denied. Using default region.');
         return;
       }
-
       try {
-        const userLocation = await Location.getCurrentPositionAsync({});
-        setRegion({
-          ...region,
-          latitude: userLocation.coords.latitude,
-          longitude: userLocation.coords.longitude,
-        });
+        const loc = await Location.getCurrentPositionAsync({});
+        setRegion(r => ({
+          ...r,
+          latitude: loc.coords.latitude,
+          longitude: loc.coords.longitude,
+        }));
       } catch (err) {
         console.error('Error fetching location:', err);
       }
     })();
   }, []);
 
-  const handleLongPress = (event: LongPressEvent) => {
+  const handleLongPress = (e: LongPressEvent) => {
     if (!favoriteId) {
-      Alert.alert('No favorite Pokémon', 'Set a favorite Pokémon before placing a marker.');
+      Alert.alert('No favorite Pokémon', 'Set a favorite Pokémon first.');
       return;
     }
-
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-
-    const newMarker: PokemonMarker = {
-      id: `${Date.now()}`,
-      coordinate: { latitude, longitude },
-      name: favoriteId,
-    };
-
-    setPokemonMarkers((prev) => [...prev, newMarker]);
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    setPokemonMarkers(m => [
+      ...m,
+      { id: `${Date.now()}`, coordinate: { latitude, longitude }, name: favoriteId },
+    ]);
   };
 
   const handleMarkerPress = async (marker: PokemonMarker) => {
+    let displayName = marker.name;
+    let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${marker.name}.png`;
     try {
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${marker.name}`);
       const data = await res.json();
-
-      const displayName = data.name;
-      const imageUrl =
+      displayName = data.name;
+      imageUrl =
         data.sprites.other?.['official-artwork']?.front_default ||
-        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${marker.name}.png`;
-
-      setSelectedMarker({
-        ...marker,
-        displayName,
-        imageUrl,
-      });
-    } catch (err) {
-      console.warn('Failed to fetch Pokémon data:', err);
-
-      setSelectedMarker({
-        ...marker,
-        displayName: marker.name,
-        imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${marker.name}.png`,
-      });
+        imageUrl;
+    } catch {
+      console.warn('Failed to fetch Pokémon data:', marker.name);
     }
+    setSelectedMarker({ ...marker, displayName, imageUrl });
+  };
+
+  const handleRemove = (id: string) => {
+    setPokemonMarkers(m => m.filter(x => x.id !== id));
+    setSelectedMarker(null);
   };
 
   return (
@@ -122,37 +100,29 @@ export default function MapScreen() {
         showsUserLocation
         showsMyLocationButton
       >
-        {pokemonMarkers.map((marker) => (
+        {pokemonMarkers.map(m => (
           <Marker
-            key={marker.id}
-            coordinate={marker.coordinate}
-            onPress={() => handleMarkerPress(marker)}
+            key={m.id}
+            coordinate={m.coordinate}
+            onPress={() => handleMarkerPress(m)}
           >
-            <CustomMarker name={marker.name} />
+            <CustomMarker name={m.name} />
           </Marker>
         ))}
       </MapView>
 
-      <MarkerModal
-        visible={!!selectedMarker}
-        marker={selectedMarker}
-        onClose={() => setSelectedMarker(null)}
-        onRemove={(id) =>
-          setPokemonMarkers((prev) => prev.filter((m) => m.id !== id))
-        }
+      <MarkerBottomSheet
+        selectedMarker={selectedMarker}
+        hasMarkers={pokemonMarkers.length > 0}   // <-- tutaj
+        onRemove={handleRemove}
       />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  map: {
-    flex: 1,
-  },
+  safe: { flex: 1, backgroundColor: '#fff' },
+  map: { flex: 1 },
   errorBanner: {
     backgroundColor: '#fdecea',
     padding: 8,

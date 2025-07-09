@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { FavoriteStorage } from '@/services/favoriteStorage';
-import { router } from 'expo-router';
 
 interface FavContext {
   favoriteId: string | null;
