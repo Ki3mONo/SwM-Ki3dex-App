@@ -40,7 +40,7 @@ export default function PokemonBottomSheet({
   return (
     <BottomSheet
       ref={sheetRef}
-      index={0}
+      index={1}
       snapPoints={snapPoints}
       onChange={idx => setExpanded(idx >= 1)}
       enableOverDrag={false}

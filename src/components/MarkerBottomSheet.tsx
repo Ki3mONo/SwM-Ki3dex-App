@@ -1,6 +1,6 @@
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import React, { useEffect, useMemo, useRef } from 'react'
-import { Image, Pressable, StyleSheet, Text } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, useWindowDimensions } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export interface PokemonMarker {
@@ -25,6 +25,7 @@ const TAB_BAR_HEIGHT = 0
 const MarkerBottomSheet: React.FC<Props> = ({ selectedMarker, hasMarkers, onRemove }) => {
   const sheetRef = useRef<BottomSheet>(null)
   const { bottom: safeBottom } = useSafeAreaInsets()
+  const { width } = useWindowDimensions()
 
   const snapPoints = useMemo(() => ['10%', '35%'], [])
 
@@ -40,13 +41,15 @@ const MarkerBottomSheet: React.FC<Props> = ({ selectedMarker, hasMarkers, onRemo
     ? 'Select a marker on the map'
     : 'Put marker on the map by holding'
 
+  const imageSize = width * 0.4
+
   return (
     <BottomSheet
       ref={sheetRef}
       snapPoints={snapPoints}
       index={0}
       enablePanDownToClose={false}
-      detached={true}
+      detached
       enableOverDrag={false}
       bottomInset={safeBottom + TAB_BAR_HEIGHT}>
       <BottomSheetView style={styles.contentContainer}>
@@ -55,7 +58,7 @@ const MarkerBottomSheet: React.FC<Props> = ({ selectedMarker, hasMarkers, onRemo
             <Text style={styles.title}>{capitalize(selectedMarker.displayName)}</Text>
             <Image
               source={{ uri: selectedMarker.imageUrl }}
-              style={styles.image}
+              style={[styles.image, { width: imageSize, height: imageSize }]}
               resizeMode="contain"
             />
             <Text style={styles.coords}>
@@ -64,7 +67,9 @@ const MarkerBottomSheet: React.FC<Props> = ({ selectedMarker, hasMarkers, onRemo
             <Text style={styles.coords}>
               Longitude: {selectedMarker.coordinate.longitude.toFixed(5)}
             </Text>
-            <Pressable style={styles.removeButton} onPress={() => onRemove(selectedMarker.id)}>
+            <Pressable
+              style={[styles.removeButton, { marginTop: width * 0.05 }]}
+              onPress={() => onRemove(selectedMarker.id)}>
               <Text style={styles.removeButtonText}>Remove Marker</Text>
             </Pressable>
           </>
@@ -94,14 +99,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   image: {
-    width: 120,
-    height: 120,
     marginBottom: 16,
   },
   coords: {
     fontSize: 14,
     color: '#333',
-    marginBottom: 8,
     textAlign: 'center',
   },
   removeButton: {
@@ -109,7 +111,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
-    marginTop: 16,
   },
   removeButtonText: {
     color: '#fff',
