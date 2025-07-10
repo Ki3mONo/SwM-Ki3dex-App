@@ -1,6 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import React, { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   Dimensions,
@@ -9,17 +9,17 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from 'react-native'
+import { useSharedValue } from 'react-native-reanimated'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import ChangeFavoriteModal, { PokemonInfo } from '@/components/ChangeFavouriteModal';
-import PokemonBottomSheet from '@/components/PokemonBottomSheet';
-import { useFavorite } from '@/hooks/useFavorite';
-import { fetchPokemonDetail } from '@/services/pokeapi';
-import type { Pokemon, PokemonSpecies } from '@/types/pokemon';
+import ChangeFavoriteModal, { PokemonInfo } from '@/components/ChangeFavouriteModal'
+import PokemonBottomSheet from '@/components/PokemonBottomSheet'
+import { useFavorite } from '@/hooks/useFavorite'
+import { fetchPokemonDetail } from '@/services/pokeapi'
+import type { Pokemon, PokemonSpecies } from '@/types/pokemon'
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get('window')
 
 const POKEMON_COLORS: Record<string, string> = {
   red: '#FF6B6B',
@@ -32,100 +32,94 @@ const POKEMON_COLORS: Record<string, string> = {
   gray: '#868E96',
   white: '#DAE0E5',
   pink: '#F783AC',
-};
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+}
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 interface Props {
-  id: string;
-  showBackButton?: boolean;
+  id: string
+  showBackButton?: boolean
 }
 
 export default function PokemonDetail({ id, showBackButton = true }: Props) {
-  const router = useRouter();
-  const { favoriteId, setFavorite, removeFavorite } = useFavorite();
+  const router = useRouter()
+  const { favoriteId, setFavorite, removeFavorite } = useFavorite()
 
-  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-  const [species, setSpecies] = useState<PokemonSpecies | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [pokemon, setPokemon] = useState<Pokemon | null>(null)
+  const [species, setSpecies] = useState<PokemonSpecies | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const [existingFav, setExistingFav] = useState<PokemonInfo | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [confirmRemoveVisible, setConfirmRemoveVisible] = useState(false);
+  const [existingFav, setExistingFav] = useState<PokemonInfo | null>(null)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [confirmRemoveVisible, setConfirmRemoveVisible] = useState(false)
 
-  const isFav = favoriteId === id;
-  const animatedPosition = useSharedValue(0);
+  const isFav = favoriteId === id
+  const animatedPosition = useSharedValue(0)
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
-        setLoading(true);
-        const { pokemon: p, species: s } = await fetchPokemonDetail(id);
-        setPokemon(p);
-        setSpecies(s);
-        setError(null);
+        setLoading(true)
+        const { pokemon: p, species: s } = await fetchPokemonDetail(id)
+        setPokemon(p)
+        setSpecies(s)
+        setError(null)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load Pokémon');
+        setError(err instanceof Error ? err.message : 'Failed to load Pokémon')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    })();
-  }, [id]);
+    })()
+  }, [id])
 
   useEffect(() => {
     if (favoriteId && favoriteId !== id) {
-      (async () => {
-        const { pokemon: p } = await fetchPokemonDetail(favoriteId);
+      ;(async () => {
+        const { pokemon: p } = await fetchPokemonDetail(favoriteId)
         const sprite =
-          p.sprites.other?.['official-artwork']?.front_default ||
-          p.sprites.front_default!;
+          p.sprites.other?.['official-artwork']?.front_default || p.sprites.front_default!
         setExistingFav({
           id: favoriteId,
           name: capitalize(p.name),
           imageUrl: sprite,
-        });
-      })();
+        })
+      })()
     } else {
-      setExistingFav(null);
+      setExistingFav(null)
     }
-  }, [favoriteId, id]);
+  }, [favoriteId, id])
 
   const handlePressFav = () => {
     if (!favoriteId) {
-      setFavorite(id);
+      setFavorite(id)
     } else if (isFav) {
-      setConfirmRemoveVisible(true);
+      setConfirmRemoveVisible(true)
     } else {
-      setModalVisible(true);
+      setModalVisible(true)
     }
-  };
+  }
 
   if (loading) {
     return (
       <SafeAreaView style={styles.center}>
         <ActivityIndicator size="large" color="#6366F1" />
       </SafeAreaView>
-    );
+    )
   }
   if (error || !pokemon || !species) {
     return (
       <SafeAreaView style={styles.center}>
         <Text style={styles.errorText}>{error || 'Pokémon not found'}</Text>
       </SafeAreaView>
-    );
+    )
   }
 
-  const color = POKEMON_COLORS[species.color.name] || '#6366F1';
-  const displayName = capitalize(pokemon.name);
+  const color = POKEMON_COLORS[species.color.name] || '#6366F1'
+  const displayName = capitalize(pokemon.name)
   const imageUrl =
-    pokemon.sprites.other?.['official-artwork']?.front_default ||
-    pokemon.sprites.front_default!;
-  const englishEntry = species.flavor_text_entries.find(
-    (e) => e.language.name === 'en'
-  );
-  const description = englishEntry
-    ? englishEntry.flavor_text.replace(/\s+/g, ' ').trim()
-    : '';
+    pokemon.sprites.other?.['official-artwork']?.front_default || pokemon.sprites.front_default!
+  const englishEntry = species.flavor_text_entries.find(e => e.language.name === 'en')
+  const description = englishEntry ? englishEntry.flavor_text.replace(/\s+/g, ' ').trim() : ''
 
   return (
     <>
@@ -164,9 +158,9 @@ export default function PokemonDetail({ id, showBackButton = true }: Props) {
           existingPokemon={existingFav}
           newPokemon={{ id, name: displayName, imageUrl }}
           onCancel={() => setModalVisible(false)}
-          onSelect={(sel) => {
-            setModalVisible(false);
-            if (sel === id) setFavorite(id);
+          onSelect={sel => {
+            setModalVisible(false)
+            if (sel === id) setFavorite(id)
           }}
         />
       )}
@@ -181,17 +175,15 @@ export default function PokemonDetail({ id, showBackButton = true }: Props) {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setConfirmRemoveVisible(false)}
-              >
+                onPress={() => setConfirmRemoveVisible(false)}>
                 <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.confirmButton]}
                 onPress={async () => {
-                  await removeFavorite();
-                  setConfirmRemoveVisible(false);
-                }}
-              >
+                  await removeFavorite()
+                  setConfirmRemoveVisible(false)
+                }}>
                 <Text style={styles.confirmText}>Remove</Text>
               </TouchableOpacity>
             </View>
@@ -199,13 +191,16 @@ export default function PokemonDetail({ id, showBackButton = true }: Props) {
         </View>
       )}
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center' },
   center: {
-    flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8F9FA'
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FA',
   },
   errorText: { fontSize: 16, color: '#EF4444' },
   back: { position: 'absolute', top: 40, left: 20 },
@@ -215,20 +210,35 @@ const styles = StyleSheet.create({
   id: { fontSize: 18, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
   image: { width: width * 0.6, height: width * 0.6, marginTop: 16 },
   modalOverlay: {
-    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 50,
   },
   modalBox: {
-    backgroundColor: 'white', padding: 24, borderRadius: 12,
-    width: '80%', alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 24,
+    borderRadius: 12,
+    width: '80%',
+    alignItems: 'center',
   },
   modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8, color: '#111827' },
   modalText: { fontSize: 16, textAlign: 'center', color: '#374151', marginBottom: 20 },
   modalButtons: { flexDirection: 'row', justifyContent: 'space-between', width: '100%' },
-  modalButton: { flex: 1, paddingVertical: 10, marginHorizontal: 5, borderRadius: 8, alignItems: 'center' },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 10,
+    marginHorizontal: 5,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
   cancelButton: { backgroundColor: '#E5E7EB' },
   confirmButton: { backgroundColor: '#EF4444' },
   cancelText: { color: '#1F2937', fontWeight: 'bold' },
   confirmText: { color: 'white', fontWeight: 'bold' },
-});
+})

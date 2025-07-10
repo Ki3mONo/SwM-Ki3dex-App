@@ -1,25 +1,18 @@
-import React from 'react';
-import {
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React from 'react'
+import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export interface PokemonInfo {
-  id: string;
-  name: string;
-  imageUrl: string;
+  id: string
+  name: string
+  imageUrl: string
 }
 
 interface Props {
-  visible: boolean;
-  existingPokemon: PokemonInfo;
-  newPokemon: PokemonInfo;
-  onCancel: () => void;
-  onSelect: (id: string) => void;
+  visible: boolean
+  existingPokemon: PokemonInfo
+  newPokemon: PokemonInfo
+  onCancel: () => void
+  onSelect: (id: string) => void
 }
 
 export default function ChangeFavoriteModal({
@@ -30,26 +23,14 @@ export default function ChangeFavoriteModal({
   onSelect,
 }: Props) {
   return (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="fade"
-      onRequestClose={onCancel}
-    >
+    <Modal transparent visible={visible} animationType="fade" onRequestClose={onCancel}>
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>
-            You already have a favorite Pokémon.
-          </Text>
-          <Text style={styles.title}>
-            Choose which one to keep:
-          </Text>
+          <Text style={styles.title}>You already have a favorite Pokémon.</Text>
+          <Text style={styles.title}>Choose which one to keep:</Text>
 
           <View style={styles.choices}>
-            <TouchableOpacity
-              style={styles.choice}
-              onPress={() => onSelect(existingPokemon.id)}
-            >
+            <TouchableOpacity style={styles.choice} onPress={() => onSelect(existingPokemon.id)}>
               <Image
                 source={{ uri: existingPokemon.imageUrl }}
                 style={styles.image}
@@ -59,10 +40,7 @@ export default function ChangeFavoriteModal({
               <Text style={styles.label}>(Current)</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.choice}
-              onPress={() => onSelect(newPokemon.id)}
-            >
+            <TouchableOpacity style={styles.choice} onPress={() => onSelect(newPokemon.id)}>
               <Image
                 source={{ uri: newPokemon.imageUrl }}
                 style={styles.image}
@@ -79,7 +57,7 @@ export default function ChangeFavoriteModal({
         </View>
       </View>
     </Modal>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -138,4 +116,4 @@ const styles = StyleSheet.create({
     color: '#4B5563',
     fontSize: 14,
   },
-});
+})

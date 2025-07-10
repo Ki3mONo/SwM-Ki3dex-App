@@ -1,62 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import {
-  SafeAreaView,
-} from 'react-native-safe-area-context';
+import React, { useEffect, useState } from 'react'
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import PokemonListItem from '@/components/PokemonListItem';
-import { fetchPokemonList } from '@/services/pokeapi';
-import type { Pokemon } from '@/types/pokemon';
+import PokemonListItem from '@/components/PokemonListItem'
+import { fetchPokemonList } from '@/services/pokeapi'
+import type { Pokemon } from '@/types/pokemon'
 
 export default function ListScreen() {
-  const [data, setData] = useState<Pokemon[]>([]);
-  const [nextUrl, setNextUrl] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [data, setData] = useState<Pokemon[]>([])
+  const [nextUrl, setNextUrl] = useState<string | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
 
   const loadPage = async (url?: string) => {
-    setRefreshing(true);
+    setRefreshing(true)
     try {
-      const { pokemons, next } = await fetchPokemonList(url);
-      setData((url ? d => [...d, ...pokemons] : () => pokemons));
-      setNextUrl(next);
+      const { pokemons, next } = await fetchPokemonList(url)
+      setData(url ? d => [...d, ...pokemons] : () => pokemons)
+      setNextUrl(next)
     } catch (err) {
-      console.error(err);
+      console.error(err)
     } finally {
-      setRefreshing(false);
-      setLoadingMore(false);
+      setRefreshing(false)
+      setLoadingMore(false)
     }
-  };
+  }
 
   useEffect(() => {
-    loadPage(); 
-  }, []);
+    loadPage()
+  }, [])
 
   const handleLoadMore = () => {
     if (nextUrl && !loadingMore) {
-      setLoadingMore(true);
-      loadPage(nextUrl);
+      setLoadingMore(true)
+      loadPage(nextUrl)
     }
-  };
+  }
 
   return (
     <SafeAreaView edges={['top']} style={styles.safe}>
       <FlatList
         data={data}
-        keyExtractor={(p) => p.id.toString()}
+        keyExtractor={p => p.id.toString()}
         renderItem={({ item }) => <PokemonListItem pokemon={item} />}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => loadPage()} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadPage()} />}
         ListEmptyComponent={() => (
           <View style={styles.empty}>
             <ActivityIndicator size="large" />
@@ -64,16 +53,12 @@ export default function ListScreen() {
           </View>
         )}
         ListFooterComponent={() =>
-          loadingMore ? (
-            <ActivityIndicator style={styles.footer} />
-          ) : null
+          loadingMore ? <ActivityIndicator style={styles.footer} /> : null
         }
-        contentContainerStyle={
-          data.length === 0 ? styles.flatEmpty : styles.flat
-        }
+        contentContainerStyle={data.length === 0 ? styles.flatEmpty : styles.flat}
       />
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -93,4 +78,4 @@ const styles = StyleSheet.create({
   footer: {
     marginVertical: 16,
   },
-});
+})

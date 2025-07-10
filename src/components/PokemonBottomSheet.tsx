@@ -1,21 +1,15 @@
-import React, { useRef, useState, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  LayoutChangeEvent,
-} from 'react-native';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import type { SharedValue } from 'react-native-reanimated';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
+import React, { useMemo, useRef, useState } from 'react'
+import { Dimensions, LayoutChangeEvent, StyleSheet, Text, View } from 'react-native'
+import type { SharedValue } from 'react-native-reanimated'
 
 interface Props {
-  types: string[];
-  description: string;
-  color: string;
-  height?: number;
-  weight?: number;
-  animatedPosition: SharedValue<number>;
+  types: string[]
+  description: string
+  color: string
+  height?: number
+  weight?: number
+  animatedPosition: SharedValue<number>
 }
 
 export default function PokemonBottomSheet({
@@ -26,36 +20,33 @@ export default function PokemonBottomSheet({
   weight,
   animatedPosition,
 }: Props) {
-  const sheetRef = useRef<BottomSheet>(null);
-  const windowHeight = Dimensions.get('window').height;
+  const sheetRef = useRef<BottomSheet>(null)
+  const windowHeight = Dimensions.get('window').height
 
-  const [contentHeight, setContentHeight] = useState(0);
+  const [contentHeight, setContentHeight] = useState(0)
   const onContentLayout = (e: LayoutChangeEvent) => {
     if (contentHeight === 0) {
-      setContentHeight(e.nativeEvent.layout.height);
+      setContentHeight(e.nativeEvent.layout.height)
     }
-  };
+  }
 
   const snapPoints = useMemo(() => {
-    const first = contentHeight > 0
-      ? contentHeight
-      : windowHeight * 0.3;
-    return [first, windowHeight * 0.5];
-  }, [contentHeight, windowHeight]);
+    const first = contentHeight > 0 ? contentHeight : windowHeight * 0.3
+    return [first, windowHeight * 0.5]
+  }, [contentHeight, windowHeight])
 
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false)
 
   return (
     <BottomSheet
       ref={sheetRef}
       index={0}
       snapPoints={snapPoints}
-      onChange={(idx) => setExpanded(idx >= 1)}
+      onChange={idx => setExpanded(idx >= 1)}
       enableOverDrag={false}
       enablePanDownToClose={false}
       handleIndicatorStyle={styles.indicator}
-      animatedPosition={animatedPosition}
-    >
+      animatedPosition={animatedPosition}>
       <BottomSheetView style={styles.content} onLayout={onContentLayout}>
         <View style={styles.typesContainer}>
           {types.map((t, i) => (
@@ -91,7 +82,7 @@ export default function PokemonBottomSheet({
         </View>
       </BottomSheetView>
     </BottomSheet>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -159,4 +150,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#111827',
   },
-});
+})

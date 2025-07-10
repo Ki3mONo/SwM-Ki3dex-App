@@ -1,48 +1,44 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { Image, Pressable, StyleSheet, Text } from 'react-native';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
+import React, { useEffect, useMemo, useRef } from 'react'
+import { Image, Pressable, StyleSheet, Text } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export interface PokemonMarker {
-  id: string;
-  coordinate: { latitude: number; longitude: number };
-  name: string;
+  id: string
+  coordinate: { latitude: number; longitude: number }
+  name: string
 }
 
 export interface SelectedMarker extends PokemonMarker {
-  displayName: string;
-  imageUrl: string;
+  displayName: string
+  imageUrl: string
 }
 
 interface Props {
-  selectedMarker: SelectedMarker | null;
-  hasMarkers: boolean;
-  onRemove: (id: string) => void;
+  selectedMarker: SelectedMarker | null
+  hasMarkers: boolean
+  onRemove: (id: string) => void
 }
 
-const TAB_BAR_HEIGHT = 0;
+const TAB_BAR_HEIGHT = 0
 
-const MarkerBottomSheet: React.FC<Props> = ({
-  selectedMarker,
-  hasMarkers,
-  onRemove,
-}) => {
-  const sheetRef = useRef<BottomSheet>(null);
-  const { bottom: safeBottom } = useSafeAreaInsets();
+const MarkerBottomSheet: React.FC<Props> = ({ selectedMarker, hasMarkers, onRemove }) => {
+  const sheetRef = useRef<BottomSheet>(null)
+  const { bottom: safeBottom } = useSafeAreaInsets()
 
-  const snapPoints = useMemo(() => ['10%', '35%'], []);
+  const snapPoints = useMemo(() => ['10%', '35%'], [])
 
   useEffect(() => {
     if (selectedMarker) {
-      sheetRef.current?.expand();
+      sheetRef.current?.expand()
     } else {
-      sheetRef.current?.snapToIndex(0);
+      sheetRef.current?.snapToIndex(0)
     }
-  }, [selectedMarker]);
+  }, [selectedMarker])
 
   const placeholderText = hasMarkers
     ? 'Select a marker on the map'
-    : 'Put marker on the map by holding';
+    : 'Put marker on the map by holding'
 
   return (
     <BottomSheet
@@ -52,14 +48,11 @@ const MarkerBottomSheet: React.FC<Props> = ({
       enablePanDownToClose={false}
       detached={true}
       enableOverDrag={false}
-      bottomInset={safeBottom + TAB_BAR_HEIGHT}
-    >
+      bottomInset={safeBottom + TAB_BAR_HEIGHT}>
       <BottomSheetView style={styles.contentContainer}>
         {selectedMarker ? (
           <>
-            <Text style={styles.title}>
-              {capitalize(selectedMarker.displayName)}
-            </Text>
+            <Text style={styles.title}>{capitalize(selectedMarker.displayName)}</Text>
             <Image
               source={{ uri: selectedMarker.imageUrl }}
               style={styles.image}
@@ -71,10 +64,7 @@ const MarkerBottomSheet: React.FC<Props> = ({
             <Text style={styles.coords}>
               Longitude: {selectedMarker.coordinate.longitude.toFixed(5)}
             </Text>
-            <Pressable
-              style={styles.removeButton}
-              onPress={() => onRemove(selectedMarker.id)}
-            >
+            <Pressable style={styles.removeButton} onPress={() => onRemove(selectedMarker.id)}>
               <Text style={styles.removeButtonText}>Remove Marker</Text>
             </Pressable>
           </>
@@ -83,10 +73,10 @@ const MarkerBottomSheet: React.FC<Props> = ({
         )}
       </BottomSheetView>
     </BottomSheet>
-  );
-};
+  )
+}
 
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 const styles = StyleSheet.create({
   contentContainer: {
@@ -125,6 +115,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
-});
+})
 
-export default MarkerBottomSheet;
+export default MarkerBottomSheet
